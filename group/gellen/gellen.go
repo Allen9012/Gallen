@@ -40,24 +40,26 @@ func New() *Engine {
 //
 // addRoute
 //  @Description: post-url:handler
-//  @receiver engine
+//  @receiver group
 //  @param method
-//  @param pattern
+//  @param comp
 //  @param handler
+//  @return {	log.Printf("Route
 //
-func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
+func (group *RouterGroup) addRoute(method string, comp string, handler HandlerFunc) {
+	pattern := group.prefix + comp
 	log.Printf("Route %4s - %s", method, pattern)
-	engine.router.addRoute(method, pattern, handler)
+	group.engine.router.addRoute(method, pattern, handler)
 }
 
 // GET defines the method to add GET request
-func (engine *Engine) GET(pattern string, handler HandlerFunc) {
-	engine.addRoute("GET", pattern, handler)
+func (group *RouterGroup) GET(pattern string, handler HandlerFunc) {
+	group.addRoute("GET", pattern, handler)
 }
 
 // POST defines the method to add POST request
-func (engine *Engine) POST(pattern string, handler HandlerFunc) {
-	engine.addRoute("POST", pattern, handler)
+func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
+	group.addRoute("POST", pattern, handler)
 }
 
 // Run defines the method to start a http server
@@ -75,7 +77,7 @@ func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	engine := group.engine
 	newGroup := &RouterGroup{
-		prefix: prefix,
+		prefix: group.prefix + prefix,
 		parent: group,
 		engine: engine,
 	}
