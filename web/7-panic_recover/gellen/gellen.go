@@ -20,7 +20,7 @@ type HandlerFunc func(*Context)
 type (
 	RouterGroup struct {
 		prefix      string
-		middlewares []HandlerFunc // support middleware
+		middlewares []HandlerFunc // support 5-middleware
 		parent      *RouterGroup  // support nesting
 		engine      *Engine       // all groups share a Engine instance
 	}
@@ -41,6 +41,13 @@ func New() *Engine {
 	engine := &Engine{router: newRouter()}
 	engine.RouterGroup = &RouterGroup{engine: engine}
 	engine.groups = []*RouterGroup{engine.RouterGroup}
+	return engine
+}
+
+// Default use Logger() & Recovery middlewares
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
 	return engine
 }
 
@@ -70,12 +77,12 @@ func (engine *Engine) LoadHTMLGlob(pattern string) {
 	engine.htmlTemplates = template.Must(template.New("").Funcs(engine.funcMap).ParseGlob(pattern))
 }
 
-/*--- group ---*/
+/*--- 4-group ---*/
 
 //
 // addRoute
 //  @Description: post-url:handler
-//  @receiver group
+//  @receiver 4-group
 //  @param method
 //  @param comp
 //  @param handler
@@ -110,7 +117,7 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	return newGroup
 }
 
-// Use is defined to add middleware to the group
+// Use is defined to add 5-middleware to the 4-group
 func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
 	group.middlewares = append(group.middlewares, middlewares...)
 }

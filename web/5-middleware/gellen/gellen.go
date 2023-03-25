@@ -8,6 +8,7 @@ package gellen
 import (
 	"log"
 	"net/http"
+	"strings"
 )
 
 // HandlerFunc defines the request handler used by gellen
@@ -17,7 +18,7 @@ type HandlerFunc func(*Context)
 type (
 	RouterGroup struct {
 		prefix      string
-		middlewares []HandlerFunc // support middleware
+		middlewares []HandlerFunc // support 5-middleware
 		parent      *RouterGroup  // support nesting
 		engine      *Engine       // all groups share a Engine instance
 	}
@@ -29,6 +30,8 @@ type (
 	}
 )
 
+/*--- engine ---*/
+
 // New is the constructor of gellen.Engine
 func New() *Engine {
 	engine := &Engine{router: newRouter()}
@@ -37,10 +40,29 @@ func New() *Engine {
 	return engine
 }
 
+// Run defines the method to start a http server
+func (engine *Engine) Run(addr string) (err error) {
+	return http.ListenAndServe(addr, engine)
+}
+
+func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range engine.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
+	c := newContext(w, req)
+	c.handlers = middlewares
+	engine.router.handle(c)
+}
+
+/*--- 4-group ---*/
+
 //
 // addRoute
 //  @Description: post-url:handler
-//  @receiver group
+//  @receiver 4-group
 //  @param method
 //  @param comp
 //  @param handler
@@ -62,16 +84,6 @@ func (group *RouterGroup) POST(pattern string, handler HandlerFunc) {
 	group.addRoute("POST", pattern, handler)
 }
 
-// Run defines the method to start a http server
-func (engine *Engine) Run(addr string) (err error) {
-	return http.ListenAndServe(addr, engine)
-}
-
-func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	c := newContext(w, req)
-	engine.router.handle(c)
-}
-
 // Group is defined to create a new RouterGroup
 // remember all groups share the same Engine instance
 func (group *RouterGroup) Group(prefix string) *RouterGroup {
@@ -83,4 +95,9 @@ func (group *RouterGroup) Group(prefix string) *RouterGroup {
 	}
 	engine.groups = append(engine.groups, newGroup)
 	return newGroup
+}
+
+// Use is defined to add 5-middleware to the 4-group
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
 }

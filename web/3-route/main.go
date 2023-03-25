@@ -3,7 +3,7 @@
   @since: 2023/3/23
   @desc: //TODO
 **/
-package route
+package __route
 
 import (
 	"github/Allen9012/gellen/gellen"
