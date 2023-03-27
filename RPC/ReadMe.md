@@ -25,3 +25,5 @@ handleRequest 使用了协程并发执行请求。
 尽力而为，只有在 header 解析失败时，才终止循环。
 
 目前还不能判断 body 的类型，因此在 readRequest 和 handleRequest 中，day1 将 body 作为字符串处理。接收到请求，打印 header，并回复 geerpc resp ${req.h.Seq}。这一部分后续再实现。
+
+还需要实现 Dial 函数，便于用户传入服务端地址，创建 Client 实例。为了简化用户调用，通过 ...*Option 将 Option 实现为可选参数。
