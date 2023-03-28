@@ -27,3 +27,10 @@ handleRequest 使用了协程并发执行请求。
 目前还不能判断 body 的类型，因此在 readRequest 和 handleRequest 中，day1 将 body 作为字符串处理。接收到请求，打印 header，并回复 geerpc resp ${req.h.Seq}。这一部分后续再实现。
 
 还需要实现 Dial 函数，便于用户传入服务端地址，创建 Client 实例。为了简化用户调用，通过 ...*Option 将 Option 实现为可选参数。
+
+集成到服务端
+通过反射结构体已经映射为服务，但请求的处理过程还没有完成。从接收到请求到回复还差以下几个步骤：第一步，根据入参类型，将请求的 body 反序列化；第二步，调用 service.call，完成方法调用；第三步，将 reply 序列化为字节流，构造响应报文，返回。
+
+回到代码本身，补全之前在 server.go 中遗留的 2 个 TODO 任务 readRequest 和 handleRequest 即可。
+
+在这之前，我们还需要为 Server 实现一个方法 Register。
