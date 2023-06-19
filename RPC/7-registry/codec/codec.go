@@ -9,7 +9,7 @@ import "io"
 
 type Header struct {
 	ServiceMethod string // format "Service.Method"
-	Seq           uint64 // sequence number chosen by client
+	Seq           uint64 // sequence number chosen by 2-client
 	Error         string
 }
 
@@ -26,7 +26,7 @@ type Type string
 
 const (
 	GobType  Type = "application/gob"
-	JsonType Type = "application/json"
+	JsonType Type = "application/json" // not implemented
 )
 
 var NewCodecFuncMap map[Type]NewCodecFunc
@@ -34,5 +34,4 @@ var NewCodecFuncMap map[Type]NewCodecFunc
 func init() {
 	NewCodecFuncMap = make(map[Type]NewCodecFunc)
 	NewCodecFuncMap[GobType] = NewGobCodec
-	NewCodecFuncMap[JsonType] = NewJsonCodec
 }

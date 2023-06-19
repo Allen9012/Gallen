@@ -28,6 +28,11 @@ var DefaultOption = &Option{
 	CodecType:   codec.GobType,
 }
 
+var JsonOption = &Option{
+	MagicNumber: MagicNumber,
+	CodecType:   codec.JsonType,
+}
+
 // Server represents an RPC Server.
 type Server struct{}
 
@@ -54,7 +59,7 @@ func (server *Server) Accept(listener net.Listener) {
 
 // Accept accepts connections on the listener and serves requests
 // for each incoming connection.
-func Accept(lis net.Listener) { DefaultServer.Accept(lis) }
+func Accept(listener net.Listener) { DefaultServer.Accept(listener) }
 
 func (server *Server) ServeConn(conn io.ReadWriteCloser) {
 	defer func() { _ = conn.Close() }()
