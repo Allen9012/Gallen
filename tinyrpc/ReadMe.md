@@ -80,3 +80,7 @@ TinyRPC的IO操作函数在[codec/io.go](https://link.zhihu.com/?target=https%3A
 注意，由于 codec 层会传入一个**bufio**类型的结构体，**bufio**类型实现了有缓冲的IO操作，以便减少IO在用户态与内核态拷贝的次数。
 
 若 *recvFrame* 函数从IO流读取**uvarint**类型的 *size* 值大于0，随后 *recvFrame* 将该从IO流中读取该 *size* 长度字节串。
+
+## 压缩器
+
+TinyRPC的压缩器代码部分很短，RawCompressor、GzipCompressor、SnappyCompressor、ZlibCompressor压缩器均实现了Compressor 接口
