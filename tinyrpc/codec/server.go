@@ -147,7 +147,7 @@ func (s *serverCodec) WriteResponse(r *rpc.Response, param any) error {
 	h.Error = r.Error
 	h.ResponseLen = uint32(len(compressedRespBody))
 	h.Checksum = crc32.ChecksumIEEE(compressedRespBody)
-	h.CompressType = header.CompressType(reqCtx.compressType)
+	h.CompressType = reqCtx.compressType
 
 	if err = sendFrame(s.w, h.Marshal()); err != nil {
 		return err

@@ -12,9 +12,6 @@ import (
 	"sync"
 )
 
-// CompressType type of compressions supported by rpc
-type CompressType uint16
-
 const (
 	// MaxHeaderSize = 2 + 10 + 10 + 10 + 4 (10 refer to binary.MaxVarintLen64)
 	MaxHeaderSize = 36
@@ -33,11 +30,11 @@ var UnmarshalError = errors.New("an error occurred in Unmarshal")
 // +--------------+----------------+----------+------------+----------+
 type RequestHeader struct {
 	sync.RWMutex
-	CompressType CompressType //它表示RPC的协议内容的压缩类型，TinyRPC支持四种压缩类型，Raw、Gzip、Snappy、Zlib
-	Method       string       // 方法名
-	ID           uint64       // 请求ID
-	RequestLen   uint32       // 请求体长度
-	Checksum     uint32       //请求体校验 使用CRC32摘要算法
+	CompressType compressor.CompressType //它表示RPC的协议内容的压缩类型，TinyRPC支持四种压缩类型，Raw、Gzip、Snappy、Zlib
+	Method       string                  // 方法名
+	ID           uint64                  // 请求ID
+	RequestLen   uint32                  // 请求体长度
+	Checksum     uint32                  //请求体校验 使用CRC32摘要算法
 }
 
 func (r *RequestHeader) Marshal() []byte {
@@ -70,7 +67,7 @@ func (r *RequestHeader) UnMarshal(data []byte) (err error) {
 		}
 	}()
 	idx, size := 0, 0
-	r.CompressType = CompressType(binary.LittleEndian.Uint16(data[idx:]))
+	r.CompressType = compressor.CompressType(binary.LittleEndian.Uint16(data[idx:]))
 	idx += Uint16Size
 	r.Method, size = readString(data[idx:])
 	idx += size
@@ -99,11 +96,11 @@ func (r *RequestHeader) GetCompressType() compressor.CompressType {
 // +--------------+---------+----------------+-------------+----------+
 type ResponseHeader struct {
 	sync.RWMutex
-	CompressType CompressType // 压缩类型
-	ID           uint64       // 请求ID
-	Error        string       // 错误信息
-	ResponseLen  uint32       // 响应体长度
-	Checksum     uint32       // 响应体校验
+	CompressType compressor.CompressType // 压缩类型
+	ID           uint64                  // 请求ID
+	Error        string                  // 错误信息
+	ResponseLen  uint32                  // 响应体长度
+	Checksum     uint32                  // 响应体校验
 }
 
 func (r *ResponseHeader) Marshal() []byte {
@@ -138,7 +135,7 @@ func (r *ResponseHeader) UnMarshal(data []byte) (err error) {
 		}
 	}()
 	idx, size := 0, 0
-	r.CompressType = CompressType(binary.LittleEndian.Uint16(data[idx:]))
+	r.CompressType = compressor.CompressType(binary.LittleEndian.Uint16(data[idx:]))
 	idx += Uint16Size
 
 	r.ID, size = binary.Uvarint(data[idx:])
