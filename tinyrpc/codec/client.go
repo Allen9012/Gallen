@@ -141,6 +141,5 @@ func (c *clientCodec) ReadResponseBody(param any) error {
 }
 
 func (c *clientCodec) Close() error {
-	//TODO implement me
-	panic("implement me")
+	return c.c.Close()
 }

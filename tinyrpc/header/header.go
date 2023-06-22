@@ -84,6 +84,13 @@ func (r *RequestHeader) UnMarshal(data []byte) (err error) {
 	return
 }
 
+// GetCompressType get compress type
+func (r *RequestHeader) GetCompressType() compressor.CompressType {
+	r.Lock()
+	defer r.Unlock()
+	return compressor.CompressType(r.CompressType)
+}
+
 // ResponseHeader request header structure looks like:
 // +--------------+---------+----------------+-------------+----------+
 // | CompressType |    ID   |      Error     | ResponseLen | Checksum |
