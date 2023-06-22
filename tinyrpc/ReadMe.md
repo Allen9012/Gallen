@@ -84,3 +84,6 @@ TinyRPC的IO操作函数在[codec/io.go](https://link.zhihu.com/?target=https%3A
 ## 压缩器
 
 TinyRPC的压缩器代码部分很短，RawCompressor、GzipCompressor、SnappyCompressor、ZlibCompressor压缩器均实现了Compressor 接口
+
+## 实现ClientCodec
+其中 compressor 表示压缩类型，serializer 表示使用的序列化器，response 是响应的头部，mutex 是用于保护 pending 的互斥锁

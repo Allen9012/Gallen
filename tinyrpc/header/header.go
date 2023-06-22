@@ -8,6 +8,7 @@ package header
 import (
 	"encoding/binary"
 	"errors"
+	"github/Allen9012/tinyrpc/compressor"
 	"sync"
 )
 
@@ -145,6 +146,13 @@ func (r *ResponseHeader) UnMarshal(data []byte) (err error) {
 
 	r.Checksum = binary.LittleEndian.Uint32(data[idx:])
 	return
+}
+
+// GetCompressType get compress type
+func (r *ResponseHeader) GetCompressType() compressor.CompressType {
+	r.Lock()
+	defer r.Unlock()
+	return compressor.CompressType(r.CompressType)
 }
 
 // 读取Method的string
