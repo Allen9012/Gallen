@@ -8,7 +8,7 @@ package header
 import (
 	"encoding/binary"
 	"errors"
-	"github/Allen9012/tinyrpc/compressor"
+	"github.com/Allen9012/tinyrpc/compressor"
 	"sync"
 )
 

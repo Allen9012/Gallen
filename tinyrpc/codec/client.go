@@ -2,9 +2,10 @@ package codec
 
 import (
 	"bufio"
-	"github/Allen9012/tinyrpc/compressor"
-	"github/Allen9012/tinyrpc/header"
-	"github/Allen9012/tinyrpc/serializer"
+	"github.com/Allen9012/tinyrpc/compressor"
+	"github.com/Allen9012/tinyrpc/header"
+	"github.com/Allen9012/tinyrpc/serializer"
+
 	"hash/crc32"
 	"io"
 	"net/rpc"
@@ -47,7 +48,8 @@ func NewClientCodec(conn io.ReadWriteCloser, compressor compressor.CompressType,
 
 func (c *clientCodec) WriteRequest(r *rpc.Request, param any) error {
 	c.mutex.Lock()
-	defer c.mutex.Unlock()
+	c.pending[r.Seq] = r.ServiceMethod
+	c.mutex.Unlock()
 
 	//	判断压缩器是否存在
 	if _, ok := compressor.Compressors[c.compressor]; !ok {

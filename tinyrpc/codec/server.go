@@ -2,9 +2,10 @@ package codec
 
 import (
 	"bufio"
-	"github/Allen9012/tinyrpc/compressor"
-	"github/Allen9012/tinyrpc/header"
-	"github/Allen9012/tinyrpc/serializer"
+	"github.com/Allen9012/tinyrpc/compressor"
+	"github.com/Allen9012/tinyrpc/header"
+	"github.com/Allen9012/tinyrpc/serializer"
+
 	"hash/crc32"
 	"io"
 	"net/rpc"

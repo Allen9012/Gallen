@@ -1,0 +1,1 @@
+protoc --tinyrpc_out=. --go_out=. .\arith.proto

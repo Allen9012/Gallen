@@ -86,4 +86,41 @@ TinyRPC的IO操作函数在[codec/io.go](https://link.zhihu.com/?target=https%3A
 TinyRPC的压缩器代码部分很短，RawCompressor、GzipCompressor、SnappyCompressor、ZlibCompressor压缩器均实现了Compressor 接口
 
 ## 实现ClientCodec
-其中 compressor 表示压缩类型，serializer 表示使用的序列化器，response 是响应的头部，mutex 是用于保护 pending 的互斥锁
+其中 compressor  表示压缩类型，serializer 表示使用的序列化器，response 是响应的头部，mutex 是用于保护 pending 的互斥锁
+
+## 实现serverCodec
+TinyRPC在codec层还需要实现net/rpc的ServerCodec接口
+
+ServerCodec 的接口和 ClientCodec 接口十分类似
+其中 ServerCodec 接口包括写响应、读请求头部和读请求体，我们建立一个 serverCodec 的结构体用来实现 ServerCodec 接口
+
+## TinyRPC的Server
+TinyRPC的服务端非常简单，把标准库 net/rpc 的 Server 结构包装了一层，其中 ServeCodec 使用的是TinyRPC的编解码器
+
+## TinyRPC的Client
+TinyRPC的客户端也很简单，把标准库 net/rpc 的 Client 结构包s装了一层，其中 ClientCodec 使用的是TinyRPC的编解码器
+
+## 压缩方式对比
+Zlib、Gzip和Snappy都是常见的压缩算法和压缩格式，它们在压缩方式和性能方面有一些区别：
+
+Zlib压缩方式：
+
+Zlib是一个通用的数据压缩库，使用DEFLATE算法进行压缩。
+Zlib压缩算法具有相对较高的压缩比，适用于需要高度压缩的数据，但压缩和解压缩速度可能较慢。
+Gzip压缩方式：
+
+Gzip是一种文件压缩格式，使用DEFLATE算法对数据进行压缩，并在压缩数据前添加了文件头和校验和等信息。
+Gzip常用于文件压缩和网络传输，可以将多个文件打包成单个Gzip文件，并保留文件的元数据。
+Gzip在压缩效率和压缩速度之间提供了一个良好的平衡，通常比Zlib稍微快一些。
+Snappy压缩方式：
+
+Snappy是一种快速的压缩/解压缩算法，旨在提供高速的数据压缩和解压缩性能。
+Snappy的压缩比相对较低，但具有非常快速的压缩和解压缩速度，适用于对速度要求较高的场景，如实时数据传输和处理。
+总体而言，Zlib和Gzip提供了更高的压缩比，适用于对压缩效率较为重视的情况。Snappy则注重压缩和解压缩的速度，适用于对速度要求较高的场景。选择使用哪种压缩方式取决于具体的应用需求和对压缩比和性能的权衡考虑。
+
+## go-proto生成
+执行脚本：
+proto的生成
+o install github.com/golang/protobuf/protoc-gen-go
+go install github.com/zehuamama/tinyrpc/protoc-gen-tinyrpc
+protoc --tinyrpc_out=. --go_out=. .\arith.proto

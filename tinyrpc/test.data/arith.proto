@@ -1,0 +1,33 @@
+/**
+  Copyright © 2023 github.com/Allen9012 All rights reserved.
+  @author: Allen
+  @since: 2023/6/23
+  @desc:
+  @modified by:
+**/
+
+syntax = "proto3";
+
+package message;
+option go_package="/message";
+
+//ArithService Defining Computational Digital Services
+service ArithService {
+  // Add addition
+  rpc Add(ArithRequest) returns (ArithResponse);
+  // Sub subtraction
+  rpc Sub(ArithRequest) returns (ArithResponse);
+  // Mul multiplication
+  rpc Mul(ArithRequest) returns (ArithResponse);
+  // Div division
+  rpc Div(ArithRequest) returns (ArithResponse);
+}
+
+message ArithRequest {
+  double a = 1;
+  double b = 2;
+}
+
+message ArithResponse {
+  double c = 1;
+}
